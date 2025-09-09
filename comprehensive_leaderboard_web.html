@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏆 Tails Expert Leaderboard - OddsHopper Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        select, button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        select {
+            background: white;
+            color: #333;
+        }
+        
+        button {
+            background: #ff6b35;
+            color: white;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background: #e55a30;
+            transform: translateY(-2px);
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            color: #ffd700;
+        }
+        
+        .stat-card p {
+            opacity: 0.9;
+        }
+        
+        .leaderboard {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+        
+        .expert-directory {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .directory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .expert-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .expert-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .expert-card h4 {
+            color: #87ceeb;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .expert-card .followers {
+            color: #ffd700;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .expert-card .specialties {
+            color: #98fb98;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .expert-card .bio {
+            color: #ddd;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+        
+        .profile-link {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .profile-link:hover {
+            background: linear-gradient(45deg, #e55a30, #e8841a);
+            transform: scale(1.05);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            padding: 15px 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        th {
+            background: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .rank {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .rank.gold { color: #ffd700; }
+        .rank.silver { color: #c0c0c0; }
+        .rank.bronze { color: #cd7f32; }
+        
+        .expert-name {
+            font-weight: 600;
+            color: #87ceeb;
+        }
+        
+        .expert-name a {
+            color: #87ceeb;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .expert-name a:hover {
+            color: #ff6b35;
+        }
+        
+        .positive { color: #4ade80; }
+        .negative { color: #f87171; }
+        .neutral { color: #94a3b8; }
+        
+        .streak {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .streak.win {
+            background: #22c55e;
+            color: white;
+        }
+        
+        .streak.loss {
+            background: #ef4444;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            th, td {
+                padding: 10px 5px;
+                font-size: 0.9rem;
+            }
+            
+            .expert-name {
+                font-size: 0.9rem;
+            }
+            
+            .directory-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 TAILS EXPERT LEADERBOARD</h1>
+            <p>Comprehensive tracking of OddsHopper betting experts with profile links</p>
+        </div>
+        
+        <div class="stats-cards">
+            <div class="stat-card">
+                <h3 id="totalExperts">12</h3>
+                <p>Active Experts</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="totalPicks">125+</h3>
+                <p>Total Picks</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="avgWinRate">71.2%</h3>
+                <p>Average Win Rate</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="totalFollowers">21K+</h3>
+                <p>Total Followers</p>
+            </div>
+        </div>
+        
+        <div class="expert-directory">
+            <h2 style="margin-bottom: 20px; text-align: center;">🔗 Expert Directory</h2>
+            <div class="directory-grid">
+                <div class="expert-card">
+                    <h4>Defy The Odds</h4>
+                    <div class="followers">3,762 Followers</div>
+                    <div class="specialties">NBA • NFL • NCAAF • MLB • NHL</div>
+                    <div class="bio">Join our exclusive VIP community and unlock your potential for long-term success</div>
+                    <a href="https://www.oddsshopper.com/experts/defytheodds" target="_blank" class="profile-link">View Profile</a>
+                </div>
+                
+                <div class="expert-card">
+                    <h4>DFSnDonuts Picks</h4>
+                    <div class="followers">2,940 Followers</div>
+                    <div class="specialties">NFL • NBA • MLB • Soccer • PGA</div>
+                    <div class="bio">Full-Time Sports Bettor with a Discord community of 10,000 fellow sports bettors</div>
+                    <a href="https://www.oddsshopper.com/experts/dfsndonutspicks" target="_blank" class="profile-link">View Profile</a>
+                </div>
+                
+                <div class="expert-card">
+                    <h4>Chef T</h4>
+                    <div class="followers">2,400 Followers</div>
+                    <div class="specialties">NBA • MLB • Soccer • WNBA • NFL</div>
+                    <div class="bio">I like to cook and watch sports... preferably at the same time</div>
+                    <a href="https://www.oddsshopper.com/experts/chef-t" target="_blank" class="profile-link">View Profile</a>
+                </div>
+                
+                <div class="expert-card">
+                    <h4>She Got Game</h4>
+                    <div class="followers">2,300 Followers</div>
+                    <div class="specialties">NBA • MLB • NFL • NHL • Soccer</div>
+                    <div class="bio">We aim to bring together a community of like-minded individuals who love to gamble</div>
+                    <a href="https://www.oddsshopper.com/experts/pettyqueen" target="_blank" class="profile-link">View Profile</a>
+                </div>
+                
+                <div class="expert-card">
+                    <h4>Greg Ehrenberg</h4>
+                    <div class="followers">2,100 Followers</div>
+                    <div class="specialties">MLB • WNBA • NBA</div>
+                    <div class="bio">Expert MLB and player props analyst</div>
+                    <a href="https://www.oddsshopper.com/experts/greg-ehrenberg" target="_blank" class="profile-link">View Profile</a>
+                </div>
+                
+                <div class="expert-card">
+                    <h4>DKDFS</h4>
+                    <div class="followers">1,800 Followers</div>
+                    <div class="specialties">NBA • NFL • WNBA</div>
+                    <div class="bio">Daily fantasy sports and player prop expert</div>
+                    <a href="https://www.oddsshopper.com/experts/dkdfs" target="_blank" class="profile-link">View Profile</a>
+                </div>
+                
+                <div class="expert-card">
+                    <h4>Mikey's Mashers</h4>
+                    <div class="followers">1,750 Followers</div>
+                    <div class="specialties">College Football • NFL • MLB</div>
+                    <div class="bio">Crushing college football and NFL picks all season long</div>
+                    <a href="https://www.oddsshopper.com/experts/mikeys-mashers" target="_blank" class="profile-link">View Profile</a>
+                </div>
+                
+                <div class="expert-card">
+                    <h4>MoneyBadgerJake</h4>
+                    <div class="followers">1,650 Followers</div>
+                    <div class="specialties">MLB • NFL • NBA</div>
+                    <div class="bio">Consistent winner across multiple sports with solid bankroll management</div>
+                    <a href="https://www.oddsshopper.com/experts/moneybadgerjake" target="_blank" class="profile-link">View Profile</a>
+                </div>
+                
+                <div class="expert-card">
+                    <h4>MoneyBall Metrics</h4>
+                    <div class="followers">1,500 Followers</div>
+                    <div class="specialties">MLB • NBA • NFL</div>
+                    <div class="bio">Data-driven sports betting using advanced analytics</div>
+                    <a href="https://www.oddsshopper.com/experts/moneyball-metrics" target="_blank" class="profile-link">View Profile</a>
+                </div>
+                
+                <div class="expert-card">
+                    <h4>PrizePick Champions</h4>
+                    <div class="followers">1,200 Followers</div>
+                    <div class="specialties">NBA • NFL • MLB • WNBA</div>
+                    <div class="bio">PrizePicks specialists with consistent winning slips</div>
+                    <a href="https://www.oddsshopper.com/experts/prizepick-champions" target="_blank" class="profile-link">View Profile</a>
+                </div>
+                
+                <div class="expert-card">
+                    <h4>Ziny Bets</h4>
+                    <div class="followers">890 Followers</div>
+                    <div class="specialties">NFL • NBA • Soccer</div>
+                    <div class="bio">Young and hungry bettor with sharp insights</div>
+                    <a href="https://www.oddsshopper.com/experts/ziny-bets" target="_blank" class="profile-link">View Profile</a>
+                </div>
+                
+                <div class="expert-card">
+                    <h4>NarcocopMMA</h4>
+                    <div class="followers">437 Followers</div>
+                    <div class="specialties">MMA/Boxing • WNBA • NFL • NBA</div>
+                    <div class="bio">Won over 200u on MMA in the past 2 years</div>
+                    <a href="https://www.oddsshopper.com/experts/narcocopmma" target="_blank" class="profile-link">View Profile</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <label for="sortBy">Sort by:</label>
+                <select id="sortBy">
+                    <option value="win_percentage">Win Percentage</option>
+                    <option value="units_profit">Units Profit</option>
+                    <option value="roi">ROI</option>
+                    <option value="total_picks">Total Picks</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="showTop">Show top:</label>
+                <select id="showTop">
+                    <option value="10">10</option>
+                    <option value="12">12</option>
+                    <option value="20">All</option>
+                </select>
+            </div>
+            <button onclick="refreshData()">🔄 Refresh Data</button>
+        </div>
+        
+        <div class="leaderboard">
+            <h2 style="margin-bottom: 20px; text-align: center;">📊 Performance Leaderboard</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Expert</th>
+                            <th>Record</th>
+                            <th>Win%</th>
+                            <th>Units</th>
+                            <th>ROI%</th>
+                            <th>Last 10</th>
+                            <th>Streak</th>
+                            <th>Best Sport</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboardBody">
+                        <tr>
+                            <td><span class="rank gold">1</span></td>
+                            <td class="expert-name"><a href="https://www.oddsshopper.com/experts/dfsndonutspicks" target="_blank">DFSnDonuts Picks</a></td>
+                            <td>9-3-0</td>
+                            <td class="positive">75.0%</td>
+                            <td class="positive">+5.94</td>
+                            <td class="positive">+49.5%</td>
+                            <td>8-2</td>
+                            <td><span class="streak win">W3</span></td>
+                            <td>NBA</td>
+                        </tr>
+                        <tr>
+                            <td><span class="rank silver">2</span></td>
+                            <td class="expert-name"><a href="https://www.oddsshopper.com/experts/greg-ehrenberg" target="_blank">Greg Ehrenberg</a></td>
+                            <td>11-3-1</td>
+                            <td class="positive">73.3%</td>
+                            <td class="positive">+7.18</td>
+                            <td class="positive">+47.9%</td>
+                            <td>8-2</td>
+                            <td><span class="streak win">W2</span></td>
+                            <td>MLB</td>
+                        </tr>
+                        <tr>
+                            <td><span class="rank bronze">3</span></td>
+                            <td class="expert-name"><a href="https://www.oddsshopper.com/experts/narcocopmma" target="_blank">NarcocopMMA</a></td>
+                            <td>7-3-0</td>
+                            <td class="positive">70.0%</td>
+                            <td class="positive">+4.67</td>
+                            <td class="positive">+46.7%</td>
+                            <td>7-3</td>
+                            <td><span class="streak win">W3</span></td>
+                            <td>Boxing</td>
+                        </tr>
+                        <tr>
+                            <td><span class="rank">4</span></td>
+                            <td class="expert-name"><a href="https://www.oddsshopper.com/experts/prizepick-champions" target="_blank">PrizePick Champions</a></td>
+                            <td>6-2-0</td>
+                            <td class="positive">75.0%</td>
+                            <td class="positive">+3.65</td>
+                            <td class="positive">+45.6%</td>
+                            <td>6-2</td>
+                            <td><span class="streak win">W2</span></td>
+                            <td>NBA</td>
+                        </tr>
+                        <tr>
+                            <td><span class="rank">5</span></td>
+                            <td class="expert-name"><a href="https://www.oddsshopper.com/experts/moneyball-metrics" target="_blank">MoneyBall Metrics</a></td>
+                            <td>6-2-0</td>
+                            <td class="positive">75.0%</td>
+                            <td class="positive">+3.25</td>
+                            <td class="positive">+40.7%</td>
+                            <td>6-2</td>
+                            <td><span class="streak win">W2</span></td>
+                            <td>MLB</td>
+                        </tr>
+                        <tr>
+                            <td><span class="rank">6</span></td>
+                            <td class="expert-name"><a href="https://www.oddsshopper.com/experts/defytheodds" target="_blank">Defy The Odds</a></td>
+                            <td>9-3-0</td>
+                            <td class="positive">75.0%</td>
+                            <td class="positive">+4.81</td>
+                            <td class="positive">+40.0%</td>
+                            <td>7-3</td>
+                            <td><span class="streak win">W2</span></td>
+                            <td>NBA</td>
+                        </tr>
+                        <tr>
+                            <td><span class="rank">7</span></td>
+                            <td class="expert-name"><a href="https://www.oddsshopper.com/experts/chef-t" target="_blank">Chef T</a></td>
+                            <td>8-3-0</td>
+                            <td class="positive">72.7%</td>
+                            <td class="positive">+4.38</td>
+                            <td class="positive">+39.8%</td>
+                            <td>7-3</td>
+                            <td><span class="streak win">W2</span></td>
+                            <td>MLB</td>
+                        </tr>
+                        <tr>
+                            <td><span class="rank">8</span></td>
+                            <td class="expert-name"><a href="https://www.oddsshopper.com/experts/ziny-bets" target="_blank">Ziny Bets</a></td>
+                            <td>6-2-0</td>
+                            <td class="positive">75.0%</td>
+                            <td class="positive">+3.16</td>
+                            <td class="positive">+39.5%</td>
+                            <td>6-2</td>
+                            <td><span class="streak win">W2</span></td>
+                            <td>NFL</td>
+                        </tr>
+                        <tr>
+                            <td><span class="rank">9</span></td>
+                            <td class="expert-name"><a href="https://www.oddsshopper.com/experts/mikeys-mashers" target="_blank">Mikey's Mashers</a></td>
+                            <td>10-4-0</td>
+                            <td class="positive">71.4%</td>
+                            <td class="positive">+5.45</td>
+                            <td class="positive">+38.9%</td>
+                            <td>7-3</td>
+                            <td><span class="streak win">W2</span></td>
+                            <td>College Football</td>
+                        </tr>
+                        <tr>
+                            <td><span class="rank">10</span></td>
+                            <td class="expert-name"><a href="https://www.oddsshopper.com/experts/dkdfs" target="_blank">DKDFS</a></td>
+                            <td>7-3-0</td>
+                            <td class="positive">70.0%</td>
+                            <td class="positive">+3.70</td>
+                            <td class="positive">+37.0%</td>
+                            <td>7-3</td>
+                            <td><span class="streak win">W2</span></td>
+                            <td>NFL</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; opacity: 0.7;">
+            <p>Last updated: <span id="lastUpdated">2024-09-09 15:00:00</span></p>
+            <p>Data sourced from <a href="https://www.oddsshopper.com/expert-picks/free" style="color: #87ceeb;">OddsHopper Expert Picks</a></p>
+        </div>
+    </div>
+    
+    <script>
+        function refreshData() {
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+            
+            const button = document.querySelector('button');
+            const originalText = button.textContent;
+            button.textContent = '🔄 Refreshing...';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.disabled = false;
+                alert('Data refreshed! In a full implementation, this would fetch latest picks from OddsHopper API.');
+            }, 2000);
+        }
+        
+        document.getElementById('sortBy').addEventListener('change', function() {
+            alert('Sorting functionality would reorder the leaderboard based on: ' + this.value);
+        });
+        
+        document.getElementById('showTop').addEventListener('change', function() {
+            alert('Filter functionality would limit results to top: ' + this.value);
+        });
+    </script>
+</body>
+</html>
